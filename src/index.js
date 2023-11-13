@@ -17,6 +17,7 @@ const ff = (opts) => new Promise((resolve, reject) => {
     let { input, args, output, verbose, verboseCallback, path } = opts
 
     if (!input || !args) return reject(`Missing input or args.`)
+    if (module.exports.path && !path) path = module.exports.path
     
     if (Array.isArray(args)) args = args.join(` `)
     args = args.split(` `)
@@ -64,4 +65,9 @@ const ff = (opts) => new Promise((resolve, reject) => {
     } else if (input instanceof Readable || input instanceof ReadStream) input.pipe(f.stdin)
 })
 
-module.exports = ff
+module.exports = {
+    ff,
+    
+    path: `ffmpeg`,
+    setPath: (path) => module.exports.path = path,
+}

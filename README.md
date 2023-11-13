@@ -23,16 +23,16 @@ You can find examples [below](#advanced-usage).
 ### Running a command
 The `quick-ffmpeg` package returns a simple function that wraps the FFmpeg command line tool, it can be imported like so:
 ```js
-const ff = require(`quick-ffmpeg`)
+const qff = require(`quick-ffmpeg`)
 ```
 The function `ff` that we just imported has one parameter which is an `Object` with a number of options. A very simplistic example of how it could be used is changing the format of a video from `.mov` to `.mp4`.
 
 *Note: the `ff` function returns a `Promise`*
 ```js
-const ff = require(`quick-ffmpeg`)
+const qff = require(`quick-ffmpeg`)
 const path = require(`path`)
 
-ff({
+qff.ff({
     input: path.join(__dirname, `video.mov`),
     args: `-f mp4`, // note that you should exclude the input and output arguments
     output: path.join(__dirname, `video.mp4`),
@@ -41,24 +41,30 @@ ff({
 ```
 ## Advanced usage
 ### path
-The `path` option can be used to specify a path to an FFmpeg binary, which can be either in your path, your file system, or dynamically imported. Some examples are shown below
+The `path` option (and setPath function or path property) can be used to specify a path to an FFmpeg binary, which can be either in your path, your file system, or dynamically imported. Some examples are shown below
 
 ```js
 const ffPath = require(`ffmpeg-static`)
 
+// Set the ffmpeg path as property
+qff.path = `~/path/to/ffmpeg/executable`
+
+// Set the ffmpeg path
+qff.setPath(`~/path/to/ffmpeg/executable`)
+
 // Dynamically imported FFmpeg
-ff({
+qff.ff({
     path: ffPath
     // for the sake of simplicity, the other parameters will be left out of the examples
 })
 
 // Example of full path being used
-ff({
-    path: `C:\\Program Files\\ffmpeg\\bin\\ffmpeg`
+qff.ff({
+    path: `~/path/to/ffmpeg/executable`
 })
 
 // Example assuming you have ffmpeg in your file path, useless in practice since the path defaults to ffmpeg.
-ff({
+qff.ff({
     path: `ffmpeg`
 })
 ```
@@ -71,22 +77,22 @@ const { readFileSync, createReadStream } = require(`fs`)
 const { Readable } = require(`stream`)
 
 // String:
-ff({
+qff.ff({
     input: path.join(__dirname, `video.mov`)
 })
 
 // Buffer:
-ff({
+qff.ff({
     input: readFileSync(`video.mov`)
 })
 
 // ReadStream
-ff({
+qff.ff({
     input: createReadStream(`video.mov`)
 })
 
 // ReadableStream
-ff({
+qff.ff({
     input: Readable.from(readFileSync(`video.mov`))
 })
 ```
@@ -96,15 +102,15 @@ The `args` option can be either an array or a string containing the arguments to
 
 *Note: Do not pass quotes around a parameter value, these are normally removed by `cmd` before passing to the program, and will make FFmpeg fail while parsing the arguments*
 ```js
-ff({
+qff.ff({
     args: `-movflags frag_keyframe+empty_moov -filter:v framestep=2,setpts=0.5*PTS -f mp4`
 })
 
-ff({
+qff.ff({
     args: `-filter:a atempo=2 -f mp3`
 })
 
-f({
+qff.ff({
     args: `-filter:v scale=w=1920:h=1080 -f avi`
 })
 ```
@@ -118,18 +124,18 @@ const { createWriteStream, writeFileSync } = require(`fs`)
 const { Writable } = require(`stream`)
 
 // String:
-ff({
+qff.ff({
     output: path.join(__dirname, `video.mp4`)
 })
 
 // WriteStream:
-ff({
+qff.ff({
     output: createWriteStream(`video.mp4`)
 })
 
 // WritableStream:
 const chunks = []
-ff({
+qff.ff({
     output: Writable({
         write (chunk, encoding, callback) {
             chunks.push(chunk)
@@ -139,7 +145,7 @@ ff({
 })
 
 // Excluded
-let bfr = ff({})
+let bfr = qff.ff({})
 writeFileSync(`video.mp4`, bfr)
 ```
 
@@ -149,14 +155,14 @@ The `verbose` and `verboseCallback` options can be used to retrieve or log ffmpe
 *Note: output is passed to the verboseCallback in form of `Buffer`s, not strings.*
 ```js
 // Logs all ffmpeg output to the console
-ff({
+qff.ff({
     verbose: true
 })
 
 // Saves all ffmpeg output to a text file
 const output = [];
 (async () => {
-    const command = await ff({
+    const command = await qff.ff({
         input: path.join(__dirname, `video.mov`),
         args: `-f mp4`,
         output: path.join(__dirname, `video.mp4`),
