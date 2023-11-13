@@ -1,0 +1,26 @@
+{
+  "name": "quick-ffmpeg",
+  "version": "1.0.0",
+  "description": "The simplest down-to-earth ffmpeg wrapper for node.js",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ffmpeg",
+    "video",
+    "audio"
+  ],
+  "author": "@viopaige (Discord, Github, NPM)",
+  "license": "GNU GPLv3",
+  "bugs": {
+    "url": "https://github.com/VioPaige/quick-ffmpeg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VioPaige/quick-ffmpeg"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
