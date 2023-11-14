@@ -3,7 +3,6 @@ const { spawn } = require(`child_process`)
 const { Writable, Readable } = require(`stream`)
 
 /**
- * @typedef {Object} quick-ffmpeg-options
  * @param {Object} opts - Options for handling ffmpeg.
  * @param {String|Buffer|Readable|ReadStream} opts.input - The input, either String (absolute file path), Buffer, ReadableStream, or ReadStream.
  * @param {String|Array} opts.args - The arguments to pass to ffmpeg, either String (arguments should be separated with spaces) or Array.
@@ -29,6 +28,7 @@ const ff = (opts) => new Promise((resolve, reject) => {
 
     const f = spawn(path ?? `ffmpeg`, args)
     f.on(`error`, reject)
+    f.stdin.on(`error`, () => {})
 
     // handle verbosity
     if (verbose) {
@@ -65,9 +65,14 @@ const ff = (opts) => new Promise((resolve, reject) => {
     } else if (input instanceof Readable || input instanceof ReadStream) input.pipe(f.stdin)
 })
 
+/**
+ * @param {string} path - The path to the ffmpeg binary.
+ */
+const setPath = (path) => module.exports.path = path
+
 module.exports = {
     ff,
     
     path: `ffmpeg`,
-    setPath: (path) => module.exports.path = path,
+    setPath,
 }
